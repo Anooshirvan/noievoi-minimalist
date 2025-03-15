@@ -3,13 +3,20 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 // Types
 export interface Content {
   id: string;
-  type: 'about' | 'service' | 'team';
+  type: 'about' | 'service' | 'team' | 'approach' | 'contact' | 'network';
   title: string;
   description?: string;
   imageSrc: string;
   name?: string;
   role?: string;
   bio?: string;
+  email?: string;
+  steps?: {
+    id: string;
+    title: string;
+    description: string;
+  }[];
+  regions?: string[];
   projects?: {
     id: string;
     title: string;
@@ -109,6 +116,46 @@ const initialContent: Content[] = [
       },
     ],
   },
+  {
+    id: 'approach',
+    type: 'approach',
+    title: 'Our Approach',
+    description: 'We believe in a collaborative approach that combines deep industry knowledge with innovative thinking. Our international network of experts allows us to tackle complex challenges from multiple perspectives, delivering solutions that are both comprehensive and tailored to your specific context.',
+    imageSrc: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    steps: [
+      {
+        id: 'step-1',
+        title: 'Analyze',
+        description: 'We thoroughly analyze your business needs, challenges, and opportunities to establish a solid foundation for our work.'
+      },
+      {
+        id: 'step-2',
+        title: 'Strategize',
+        description: 'Our team develops comprehensive strategies that align with your goals and leverage our global expertise.'
+      },
+      {
+        id: 'step-3',
+        title: 'Implement',
+        description: 'We work with you to implement solutions, providing guidance and support throughout the entire process.'
+      }
+    ]
+  },
+  {
+    id: 'network',
+    type: 'network',
+    title: 'Our Network',
+    description: 'With contacts spanning across multiple continents and industries, we connect you to the right expertise when you need it most. Our global network includes specialists in technology, finance, healthcare, manufacturing, and more.',
+    imageSrc: 'https://images.unsplash.com/photo-1599059813005-11265ba4b4ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    regions: ['North America', 'Europe', 'Asia Pacific', 'Middle East']
+  },
+  {
+    id: 'contact',
+    type: 'contact',
+    title: 'Join Our Team',
+    description: 'We\'re always looking for talented individuals who share our passion for excellence and innovation. If you\'re interested in joining our team, please reach out with your qualifications and areas of expertise.',
+    imageSrc: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    email: 'careers@noievoi.com'
+  }
 ];
 
 // Admin context

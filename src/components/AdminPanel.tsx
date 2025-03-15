@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAdmin, Content } from '../contexts/AdminContext';
-import { X, Upload, Save, Trash2, ChevronLeft } from 'lucide-react';
+import { X, Upload, Save, Trash2, ChevronLeft, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AdminFormProps {
@@ -30,6 +30,16 @@ const AdminForm: React.FC<AdminFormProps> = ({
   } as Content);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  
+  // For approach steps
+  const [steps, setSteps] = useState<{id: string; title: string; description: string}[]>(
+    formData.steps || []
+  );
+  
+  // For network regions
+  const [regions, setRegions] = useState<string[]>(
+    formData.regions || []
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -61,6 +71,40 @@ const AdminForm: React.FC<AdminFormProps> = ({
     reader.readAsDataURL(file);
   };
 
+  // Handle step changes
+  const handleStepChange = (index: number, field: 'title' | 'description', value: string) => {
+    const newSteps = [...steps];
+    newSteps[index] = { ...newSteps[index], [field]: value };
+    setSteps(newSteps);
+  };
+
+  // Add a new step
+  const addStep = () => {
+    setSteps([...steps, { id: `step-${Date.now()}`, title: '', description: '' }]);
+  };
+
+  // Remove a step
+  const removeStep = (index: number) => {
+    setSteps(steps.filter((_, i) => i !== index));
+  };
+
+  // Handle region changes
+  const handleRegionChange = (index: number, value: string) => {
+    const newRegions = [...regions];
+    newRegions[index] = value;
+    setRegions(newRegions);
+  };
+
+  // Add a new region
+  const addRegion = () => {
+    setRegions([...regions, '']);
+  };
+
+  // Remove a region
+  const removeRegion = (index: number) => {
+    setRegions(regions.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -69,9 +113,16 @@ const AdminForm: React.FC<AdminFormProps> = ({
       return;
     }
 
+    // Add steps and regions to formData if they exist
+    const updatedFormData = {
+      ...formData,
+      ...(steps.length > 0 && { steps }),
+      ...(regions.length > 0 && { regions })
+    };
+
     const updatedData = isNew 
-      ? { ...formData, id: generateId(formData.type) } 
-      : formData;
+      ? { ...updatedFormData, id: generateId(updatedFormData.type) } 
+      : updatedFormData;
       
     onSave(updatedData);
     toast.success(`${isNew ? 'Created' : 'Updated'} successfully`);
@@ -124,6 +175,132 @@ const AdminForm: React.FC<AdminFormProps> = ({
             </div>
           </>
         );
+      case 'approach':
+        return (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={4}
+                className="admin-form-input"
+                placeholder="Detailed description"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Steps</label>
+              {steps.map((step, index) => (
+                <div key={step.id} className="mb-4 p-4 border rounded relative">
+                  <button 
+                    type="button" 
+                    onClick={() => removeStep(index)}
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                  >
+                    <X size={16} />
+                  </button>
+                  <div className="mb-2">
+                    <input
+                      type="text"
+                      value={step.title}
+                      onChange={(e) => handleStepChange(index, 'title', e.target.value)}
+                      className="admin-form-input mb-2"
+                      placeholder="Step title"
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      value={step.description}
+                      onChange={(e) => handleStepChange(index, 'description', e.target.value)}
+                      rows={2}
+                      className="admin-form-input"
+                      placeholder="Step description"
+                    />
+                  </div>
+                </div>
+              ))}
+              <button 
+                type="button" 
+                onClick={addStep}
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <Plus size={16} className="mr-1" /> Add Step
+              </button>
+            </div>
+          </>
+        );
+      case 'network':
+        return (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={4}
+                className="admin-form-input"
+                placeholder="Detailed description"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Regions</label>
+              {regions.map((region, index) => (
+                <div key={index} className="flex mb-2">
+                  <input
+                    type="text"
+                    value={region}
+                    onChange={(e) => handleRegionChange(index, e.target.value)}
+                    className="admin-form-input flex-grow mr-2"
+                    placeholder="Region name"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removeRegion(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Minus size={16} />
+                  </button>
+                </div>
+              ))}
+              <button 
+                type="button" 
+                onClick={addRegion}
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <Plus size={16} className="mr-1" /> Add Region
+              </button>
+            </div>
+          </>
+        );
+      case 'contact':
+        return (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={4}
+                className="admin-form-input"
+                placeholder="Detailed description"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email || ''}
+                onChange={handleChange}
+                className="admin-form-input"
+                placeholder="Contact email"
+              />
+            </div>
+          </>
+        );
       default:
         return (
           <div className="mb-4">
@@ -168,6 +345,9 @@ const AdminForm: React.FC<AdminFormProps> = ({
               <option value="about">About</option>
               <option value="service">Service</option>
               <option value="team">Team Member</option>
+              <option value="approach">Approach</option>
+              <option value="network">Network</option>
+              <option value="contact">Contact</option>
             </select>
           </div>
         )}
@@ -249,7 +429,7 @@ const AdminPanel: React.FC = () => {
   const { content, updateContent, addContent, deleteContent, logout } = useAdmin();
   const [editingItem, setEditingItem] = useState<Content | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [activeTab, setActiveTab] = useState<'about' | 'services' | 'team'>('about');
+  const [activeTab, setActiveTab] = useState<'about' | 'services' | 'team' | 'other'>('about');
 
   const handleEdit = (item: Content) => {
     setEditingItem(item);
@@ -280,6 +460,7 @@ const AdminPanel: React.FC = () => {
     if (activeTab === 'about') return item.type === 'about';
     if (activeTab === 'services') return item.type === 'service';
     if (activeTab === 'team') return item.type === 'team';
+    if (activeTab === 'other') return ['approach', 'network', 'contact'].includes(item.type);
     return true;
   });
 
@@ -351,6 +532,12 @@ const AdminPanel: React.FC = () => {
           >
             Team
           </button>
+          <button
+            className={`pb-3 px-1 font-medium ${activeTab === 'other' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+            onClick={() => setActiveTab('other')}
+          >
+            Other Content
+          </button>
         </div>
       </div>
 
@@ -373,6 +560,9 @@ const AdminPanel: React.FC = () => {
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                 {item.role || item.description}
               </p>
+              <div className="mt-2 text-xs text-gray-400 uppercase">
+                {item.type}
+              </div>
             </div>
           </div>
         ))}

@@ -6,10 +6,14 @@ import { useAdmin } from '../contexts/AdminContext';
 
 const Team = () => {
   const { content } = useAdmin();
-  // Fix type casting by ensuring only team members with name property are used
+  
+  // Get team members
   const teamMembers = content.filter(item => 
     item.type === 'team' && item.name
   ) as unknown as TeamMemberType[];
+  
+  // Get contact content
+  const contactContent = content.find(item => item.type === 'contact');
 
   return (
     <div className="page-transition">
@@ -40,12 +44,12 @@ const Team = () => {
       <section className="section-spacing bg-gray-50">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-medium">Join Our Team</h2>
+            <h2 className="text-3xl md:text-4xl font-medium">{contactContent?.title || 'Join Our Team'}</h2>
             <p className="mt-6 text-gray-600 leading-relaxed">
-              We're always looking for talented individuals who share our passion for excellence and innovation. If you're interested in joining our team, please reach out with your qualifications and areas of expertise.
+              {contactContent?.description || 'We\'re always looking for talented individuals who share our passion for excellence and innovation. If you\'re interested in joining our team, please reach out with your qualifications and areas of expertise.'}
             </p>
             <a 
-              href="mailto:careers@noievoi.com" 
+              href={`mailto:${contactContent?.email || 'careers@noievoi.com'}`} 
               className="inline-block mt-8 px-8 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors"
             >
               Contact Us
