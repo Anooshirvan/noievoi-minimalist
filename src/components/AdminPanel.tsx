@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useAdmin, Content } from '../contexts/AdminContext';
-import { X, Upload, Save, Trash2 } from 'lucide-react';
+import { X, Upload, Save, Trash2, ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface AdminFormProps {
@@ -95,7 +96,8 @@ const AdminForm: React.FC<AdminFormProps> = ({
                 name="name"
                 value={formData.name || ''}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="admin-form-input"
+                placeholder="Team member name"
               />
             </div>
             <div className="mb-4">
@@ -105,7 +107,8 @@ const AdminForm: React.FC<AdminFormProps> = ({
                 name="role"
                 value={formData.role || ''}
                 onChange={handleChange}
-                className="w-full p-2 border rounded"
+                className="admin-form-input"
+                placeholder="Team member role/position"
               />
             </div>
             <div className="mb-4">
@@ -115,7 +118,8 @@ const AdminForm: React.FC<AdminFormProps> = ({
                 value={formData.bio || ''}
                 onChange={handleChange}
                 rows={4}
-                className="w-full p-2 border rounded"
+                className="admin-form-input"
+                placeholder="A brief biography of this team member"
               />
             </div>
           </>
@@ -129,7 +133,8 @@ const AdminForm: React.FC<AdminFormProps> = ({
               value={formData.description || ''}
               onChange={handleChange}
               rows={4}
-              className="w-full p-2 border rounded"
+              className="admin-form-input"
+              placeholder="Detailed description"
             />
           </div>
         );
@@ -158,7 +163,7 @@ const AdminForm: React.FC<AdminFormProps> = ({
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="admin-form-input"
             >
               <option value="about">About</option>
               <option value="service">Service</option>
@@ -174,7 +179,8 @@ const AdminForm: React.FC<AdminFormProps> = ({
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="admin-form-input"
+            placeholder="Title or heading"
           />
         </div>
 
@@ -209,7 +215,7 @@ const AdminForm: React.FC<AdminFormProps> = ({
           <div className="space-x-2">
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+              className="btn-primary"
             >
               <Save size={16} className="inline mr-2" />
               Save
@@ -217,7 +223,7 @@ const AdminForm: React.FC<AdminFormProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+              className="btn-secondary"
             >
               Cancel
             </button>
@@ -227,7 +233,7 @@ const AdminForm: React.FC<AdminFormProps> = ({
             <button
               type="button"
               onClick={handleDelete}
-              className="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors"
+              className="btn-danger"
             >
               <Trash2 size={16} className="inline mr-2" />
               Delete
@@ -279,33 +285,46 @@ const AdminPanel: React.FC = () => {
 
   if (editingItem || isAdding) {
     return (
-      <AdminForm 
-        item={editingItem} 
-        onSave={handleSave} 
-        onCancel={() => {
-          setEditingItem(null);
-          setIsAdding(false);
-        }}
-        onDelete={editingItem ? () => handleDelete(editingItem.id) : undefined}
-        isNew={isAdding}
-      />
+      <div className="container mx-auto p-6 pt-24">
+        <button 
+          onClick={() => {
+            setEditingItem(null);
+            setIsAdding(false);
+          }}
+          className="flex items-center text-gray-600 hover:text-black mb-4 transition-colors"
+        >
+          <ChevronLeft size={16} className="mr-2" />
+          Back to Content List
+        </button>
+        
+        <AdminForm 
+          item={editingItem} 
+          onSave={handleSave} 
+          onCancel={() => {
+            setEditingItem(null);
+            setIsAdding(false);
+          }}
+          onDelete={editingItem ? () => handleDelete(editingItem.id) : undefined}
+          isNew={isAdding}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 pt-24">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-medium">Content Management</h1>
         <div className="space-x-2">
           <button 
             onClick={handleAddNew}
-            className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 transition-colors"
+            className="btn-primary"
           >
             Add New
           </button>
           <button 
             onClick={logout}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+            className="btn-secondary"
           >
             Logout
           </button>
@@ -339,7 +358,7 @@ const AdminPanel: React.FC = () => {
         {filteredContent.map(item => (
           <div 
             key={item.id} 
-            className="bg-white border border-gray-100 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+            className="admin-content-item"
             onClick={() => handleEdit(item)}
           >
             <div className="h-40 overflow-hidden">

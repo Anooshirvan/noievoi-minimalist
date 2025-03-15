@@ -40,20 +40,21 @@ const Header = () => {
     { name: 'About', path: '/' },
     { name: 'Services', path: '/services' },
     { name: 'Team', path: '/team' },
+    { name: 'Admin', path: '/admin' },
   ];
 
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
         scrollPosition > 20 
-          ? 'bg-white/80 backdrop-blur-md shadow-sm' 
+          ? 'bg-black/80 backdrop-blur-md' 
           : 'bg-transparent'
       }`}
     >
       <div className="container-custom h-20 flex items-center justify-between">
         <Link 
           to="/" 
-          className="text-2xl font-medium tracking-tight hover:opacity-80 transition-opacity"
+          className="text-3xl font-medium tracking-tight text-white hover:opacity-80 transition-opacity"
         >
           noievoi
         </Link>
@@ -64,10 +65,10 @@ const Header = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`relative py-2 text-sm tracking-wide font-medium hover:text-black transition-colors ${
+              className={`relative py-2 text-sm tracking-wide font-medium hover:text-white transition-colors ${
                 isActive(item.path) 
-                  ? 'text-black after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-black'
-                  : 'text-gray-600'
+                  ? 'text-white after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-white'
+                  : 'text-white/70'
               }`}
             >
               {item.name}
@@ -78,7 +79,7 @@ const Header = () => {
         {/* Mobile Menu Button */}
         <button 
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden flex items-center"
+          className="md:hidden flex items-center text-white"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
           <Menu className={`w-6 h-6 transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
@@ -86,14 +87,14 @@ const Header = () => {
 
         {/* Mobile Menu */}
         <div 
-          className={`fixed inset-y-0 right-0 w-[75%] max-w-sm bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out ${
+          className={`fixed inset-y-0 right-0 w-[75%] max-w-sm bg-black shadow-lg z-50 transition-transform duration-300 ease-in-out ${
             isMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           <div className="h-20 flex items-center justify-end px-6">
             <button 
               onClick={() => setIsMenuOpen(false)}
-              className="flex items-center"
+              className="flex items-center text-white"
               aria-label="Close menu"
             >
               <X className="w-6 h-6" />
@@ -105,7 +106,7 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={`text-lg font-medium ${
-                  isActive(item.path) ? 'text-black' : 'text-gray-600'
+                  isActive(item.path) ? 'text-white' : 'text-white/70'
                 }`}
               >
                 {item.name}
@@ -117,7 +118,7 @@ const Header = () => {
         {/* Overlay when mobile menu is open */}
         {isMenuOpen && (
           <div 
-            className="md:hidden fixed inset-0 bg-black/20 z-40 animate-fade-in"
+            className="md:hidden fixed inset-0 bg-black/50 z-40 animate-fade-in"
             onClick={() => setIsMenuOpen(false)}
           />
         )}
