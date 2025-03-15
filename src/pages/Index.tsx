@@ -5,9 +5,17 @@ import { useAdmin } from '../contexts/AdminContext';
 
 const Index = () => {
   const { content } = useAdmin();
-  const aboutContent = content.find(item => item.type === 'about');
-  const approachContent = content.find(item => item.type === 'approach');
-  const networkContent = content.find(item => item.type === 'network');
+  
+  // Get page-specific content
+  const homeContent = content.filter(item => item.page === 'home' || (!item.page && (item.type === 'about' || item.type === 'approach' || item.type === 'network')));
+  
+  // Get specific sections
+  const heroContent = homeContent.find(item => item.type === 'hero') || 
+    content.find(item => item.type === 'about'); // Fallback to about content
+  
+  const aboutContent = homeContent.find(item => item.type === 'about');
+  const approachContent = homeContent.find(item => item.type === 'approach');
+  const networkContent = homeContent.find(item => item.type === 'network');
 
   if (!aboutContent) {
     return <div>Loading...</div>;
@@ -16,10 +24,10 @@ const Index = () => {
   return (
     <div className="page-transition">
       <HeroSection 
-        title={aboutContent.title}
-        subtitle={aboutContent.description}
-        imageSrc={aboutContent.imageSrc}
-        smallText="ABOUT US"
+        title={heroContent?.title || aboutContent.title}
+        subtitle={heroContent?.description || aboutContent.description}
+        imageSrc={heroContent?.imageSrc || aboutContent.imageSrc}
+        smallText={heroContent?.smallText || "ABOUT US"}
       />
       
       <section className="section-spacing">

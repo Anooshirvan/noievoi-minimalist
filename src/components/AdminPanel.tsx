@@ -27,6 +27,7 @@ const AdminForm: React.FC<AdminFormProps> = ({
     title: '',
     description: '',
     imageSrc: '',
+    page: 'home'
   } as Content);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -301,6 +302,47 @@ const AdminForm: React.FC<AdminFormProps> = ({
             </div>
           </>
         );
+      case 'hero':
+        return (
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Subtitle</label>
+              <textarea
+                name="description"
+                value={formData.description || ''}
+                onChange={handleChange}
+                rows={3}
+                className="admin-form-input"
+                placeholder="Hero subtitle"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Small Text</label>
+              <input
+                type="text"
+                name="smallText"
+                value={formData.smallText || ''}
+                onChange={handleChange}
+                className="admin-form-input"
+                placeholder="Small text (e.g., ABOUT US)"
+              />
+            </div>
+          </>
+        );
+      case 'service':
+        return (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">Description</label>
+            <textarea
+              name="description"
+              value={formData.description || ''}
+              onChange={handleChange}
+              rows={4}
+              className="admin-form-input"
+              placeholder="Service description"
+            />
+          </div>
+        );
       default:
         return (
           <div className="mb-4">
@@ -334,22 +376,39 @@ const AdminForm: React.FC<AdminFormProps> = ({
 
       <form onSubmit={handleSubmit}>
         {isNew && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Content Type</label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="admin-form-input"
-            >
-              <option value="about">About</option>
-              <option value="service">Service</option>
-              <option value="team">Team Member</option>
-              <option value="approach">Approach</option>
-              <option value="network">Network</option>
-              <option value="contact">Contact</option>
-            </select>
-          </div>
+          <>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Page</label>
+              <select
+                name="page"
+                value={formData.page || 'home'}
+                onChange={handleChange}
+                className="admin-form-input"
+              >
+                <option value="home">Home Page</option>
+                <option value="services">Services Page</option>
+                <option value="team">Team Page</option>
+                <option value="global">Global Elements</option>
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">Content Type</label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="admin-form-input"
+              >
+                <option value="about">About Section</option>
+                <option value="service">Service</option>
+                <option value="team">Team Member</option>
+                <option value="approach">Approach Section</option>
+                <option value="network">Network Section</option>
+                <option value="contact">Contact Section</option>
+                <option value="hero">Hero Section</option>
+              </select>
+            </div>
+          </>
         )}
 
         <div className="mb-4">
@@ -429,7 +488,7 @@ const AdminPanel: React.FC = () => {
   const { content, updateContent, addContent, deleteContent, logout } = useAdmin();
   const [editingItem, setEditingItem] = useState<Content | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [activeTab, setActiveTab] = useState<'about' | 'services' | 'team' | 'other'>('about');
+  const [activeTab, setActiveTab] = useState<'home' | 'services' | 'team' | 'global'>('home');
 
   const handleEdit = (item: Content) => {
     setEditingItem(item);
@@ -456,12 +515,17 @@ const AdminPanel: React.FC = () => {
     setEditingItem(null);
   };
 
+  // Filter content based on the active tab (page)
   const filteredContent = content.filter(item => {
-    if (activeTab === 'about') return item.type === 'about';
-    if (activeTab === 'services') return item.type === 'service';
-    if (activeTab === 'team') return item.type === 'team';
-    if (activeTab === 'other') return ['approach', 'network', 'contact'].includes(item.type);
-    return true;
+    // If no page property exists, assign to appropriate page based on type
+    const itemPage = item.page || (
+      item.type === 'service' ? 'services' : 
+      item.type === 'team' ? 'team' : 
+      item.type === 'about' || item.type === 'approach' || item.type === 'network' ? 'home' : 
+      'global'
+    );
+    
+    return itemPage === activeTab;
   });
 
   if (editingItem || isAdding) {
@@ -495,13 +559,13 @@ const AdminPanel: React.FC = () => {
   return (
     <div className="container mx-auto p-6 pt-24">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-medium">Content Management</h1>
+        <h1 className="text-2xl font-medium">Website Content Management</h1>
         <div className="space-x-2">
           <button 
             onClick={handleAddNew}
             className="btn-primary"
           >
-            Add New
+            Add New Content
           </button>
           <button 
             onClick={logout}
@@ -515,30 +579,45 @@ const AdminPanel: React.FC = () => {
       <div className="mb-6 border-b">
         <div className="flex space-x-4">
           <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'about' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('about')}
+            className={`pb-3 px-1 font-medium ${activeTab === 'home' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+            onClick={() => setActiveTab('home')}
           >
-            About
+            Home Page
           </button>
           <button
             className={`pb-3 px-1 font-medium ${activeTab === 'services' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
             onClick={() => setActiveTab('services')}
           >
-            Services
+            Services Page
           </button>
           <button
             className={`pb-3 px-1 font-medium ${activeTab === 'team' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
             onClick={() => setActiveTab('team')}
           >
-            Team
+            Team Page
           </button>
           <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'other' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('other')}
+            className={`pb-3 px-1 font-medium ${activeTab === 'global' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+            onClick={() => setActiveTab('global')}
           >
-            Other Content
+            Global Elements
           </button>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="text-xl font-medium mb-2">
+          {activeTab === 'home' && 'Home Page Content'}
+          {activeTab === 'services' && 'Services Page Content'}
+          {activeTab === 'team' && 'Team Page Content'}
+          {activeTab === 'global' && 'Global Elements'}
+        </h2>
+        <p className="text-gray-600">
+          {activeTab === 'home' && 'Manage the content displayed on your home page.'}
+          {activeTab === 'services' && 'Manage your services and related content.'}
+          {activeTab === 'team' && 'Manage team members and team page content.'}
+          {activeTab === 'global' && 'Manage elements that appear across multiple pages.'}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -558,7 +637,7 @@ const AdminPanel: React.FC = () => {
             <div className="p-4">
               <h3 className="font-medium">{item.name || item.title}</h3>
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                {item.role || item.description}
+                {item.role || item.description || (item.type === 'hero' ? 'Hero Section' : '')}
               </p>
               <div className="mt-2 text-xs text-gray-400 uppercase">
                 {item.type}
@@ -566,6 +645,11 @@ const AdminPanel: React.FC = () => {
             </div>
           </div>
         ))}
+        {filteredContent.length === 0 && (
+          <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg">
+            <p className="text-gray-500">No content found for this page. Click "Add New Content" to create some.</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,15 +6,25 @@ import { useAdmin } from '../contexts/AdminContext';
 
 const Services = () => {
   const { content } = useAdmin();
-  const services = content.filter(item => item.type === 'service');
+  
+  // Get page-specific content
+  const servicesPageContent = content.filter(item => 
+    item.page === 'services' || (!item.page && item.type === 'service')
+  );
+  
+  // Get hero content
+  const heroContent = servicesPageContent.find(item => item.type === 'hero');
+  
+  // Get services
+  const services = servicesPageContent.filter(item => item.type === 'service');
 
   return (
     <div className="page-transition">
       <HeroSection 
-        title="Our Services"
-        subtitle="Tailored solutions to meet your business needs across various industries and challenges."
-        imageSrc="https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-        smallText="SERVICES"
+        title={heroContent?.title || "Our Services"}
+        subtitle={heroContent?.description || "Tailored solutions to meet your business needs across various industries and challenges."}
+        imageSrc={heroContent?.imageSrc || "https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"}
+        smallText={heroContent?.smallText || "SERVICES"}
       />
       
       <section className="section-spacing">

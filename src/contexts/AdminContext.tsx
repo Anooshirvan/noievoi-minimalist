@@ -1,9 +1,10 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Types
 export interface Content {
   id: string;
-  type: 'about' | 'service' | 'team' | 'approach' | 'contact' | 'network';
+  type: 'about' | 'service' | 'team' | 'approach' | 'contact' | 'network' | 'hero';
   title: string;
   description?: string;
   imageSrc: string;
@@ -11,6 +12,8 @@ export interface Content {
   role?: string;
   bio?: string;
   email?: string;
+  page?: 'home' | 'services' | 'team' | 'global';
+  smallText?: string;
   steps?: {
     id: string;
     title: string;
@@ -43,6 +46,7 @@ const initialContent: Content[] = [
     title: 'International Experts in Diverse Industries',
     description: 'At noievoi, we bring together specialists from around the globe to provide innovative solutions for complex challenges. Our extensive network of professionals spans multiple industries, ensuring that we deliver comprehensive expertise tailored to your specific needs.',
     imageSrc: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+    page: 'home'
   },
   {
     id: 'service-1',
@@ -50,6 +54,7 @@ const initialContent: Content[] = [
     title: 'Strategic Consulting',
     description: 'Our strategic consulting services help businesses identify growth opportunities, optimize operations, and develop robust plans for the future.',
     imageSrc: 'https://images.unsplash.com/photo-1534551767192-78b8dd45b51b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'services'
   },
   {
     id: 'service-2',
@@ -57,6 +62,7 @@ const initialContent: Content[] = [
     title: 'Digital Transformation',
     description: 'Navigate the digital landscape with confidence. We help organizations implement cutting-edge technologies and practices to stay competitive.',
     imageSrc: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'services'
   },
   {
     id: 'service-3',
@@ -64,6 +70,7 @@ const initialContent: Content[] = [
     title: 'Market Entry Strategy',
     description: 'Expand your business into new markets with our comprehensive market entry strategies, tailored to regional nuances and opportunities.',
     imageSrc: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2015&q=80',
+    page: 'services'
   },
   {
     id: 'team-1',
@@ -73,6 +80,7 @@ const initialContent: Content[] = [
     role: 'CEO & Founder',
     imageSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
     bio: 'Alex brings over 15 years of experience in international business development and strategic leadership. Before founding noievoi, he led global expansion efforts for several Fortune 500 companies.',
+    page: 'team',
     projects: [
       {
         id: 'project-1',
@@ -90,6 +98,7 @@ const initialContent: Content[] = [
     role: 'Chief Strategy Officer',
     imageSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80',
     bio: 'Sophia is a strategic thinker with a background in management consulting at top firms. She specializes in helping organizations navigate complex market challenges and identify growth opportunities.',
+    page: 'team',
     projects: [
       {
         id: 'project-2',
@@ -107,6 +116,7 @@ const initialContent: Content[] = [
     role: 'Head of Technology',
     imageSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
     bio: 'Daniel leads our technology initiatives with over a decade of experience in IT strategy and implementation. His expertise spans artificial intelligence, cloud computing, and cybersecurity.',
+    page: 'team',
     projects: [
       {
         id: 'project-3',
@@ -122,6 +132,7 @@ const initialContent: Content[] = [
     title: 'Our Approach',
     description: 'We believe in a collaborative approach that combines deep industry knowledge with innovative thinking. Our international network of experts allows us to tackle complex challenges from multiple perspectives, delivering solutions that are both comprehensive and tailored to your specific context.',
     imageSrc: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'home',
     steps: [
       {
         id: 'step-1',
@@ -146,6 +157,7 @@ const initialContent: Content[] = [
     title: 'Our Network',
     description: 'With contacts spanning across multiple continents and industries, we connect you to the right expertise when you need it most. Our global network includes specialists in technology, finance, healthcare, manufacturing, and more.',
     imageSrc: 'https://images.unsplash.com/photo-1599059813005-11265ba4b4ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'home',
     regions: ['North America', 'Europe', 'Asia Pacific', 'Middle East']
   },
   {
@@ -154,7 +166,35 @@ const initialContent: Content[] = [
     title: 'Join Our Team',
     description: 'We\'re always looking for talented individuals who share our passion for excellence and innovation. If you\'re interested in joining our team, please reach out with your qualifications and areas of expertise.',
     imageSrc: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'team',
     email: 'careers@noievoi.com'
+  },
+  {
+    id: 'home-hero',
+    type: 'hero',
+    title: 'International Experts in Diverse Industries',
+    description: 'At noievoi, we bring together specialists from around the globe to provide innovative solutions for complex challenges.',
+    smallText: 'ABOUT US',
+    imageSrc: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+    page: 'home'
+  },
+  {
+    id: 'services-hero',
+    type: 'hero',
+    title: 'Our Services',
+    description: 'Tailored solutions to meet your business needs across various industries and challenges.',
+    smallText: 'SERVICES',
+    imageSrc: 'https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'services'
+  },
+  {
+    id: 'team-hero',
+    type: 'hero',
+    title: 'Our Team',
+    description: 'Meet our diverse group of experts with extensive experience across multiple industries.',
+    smallText: 'TEAM',
+    imageSrc: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    page: 'team'
   }
 ];
 

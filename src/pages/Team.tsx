@@ -7,21 +7,30 @@ import { useAdmin } from '../contexts/AdminContext';
 const Team = () => {
   const { content } = useAdmin();
   
+  // Get page-specific content
+  const teamPageContent = content.filter(item => 
+    item.page === 'team' || (!item.page && item.type === 'team')
+  );
+  
+  // Get team hero
+  const heroContent = teamPageContent.find(item => item.type === 'hero');
+  
   // Get team members
-  const teamMembers = content.filter(item => 
+  const teamMembers = teamPageContent.filter(item => 
     item.type === 'team' && item.name
   ) as unknown as TeamMemberType[];
   
   // Get contact content
-  const contactContent = content.find(item => item.type === 'contact');
+  const contactContent = teamPageContent.find(item => item.type === 'contact') || 
+    content.find(item => item.type === 'contact');
 
   return (
     <div className="page-transition">
       <HeroSection 
-        title="Our Team"
-        subtitle="Meet our diverse group of experts with extensive experience across multiple industries."
-        imageSrc="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-        smallText="TEAM"
+        title={heroContent?.title || "Our Team"}
+        subtitle={heroContent?.description || "Meet our diverse group of experts with extensive experience across multiple industries."}
+        imageSrc={heroContent?.imageSrc || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"}
+        smallText={heroContent?.smallText || "TEAM"}
       />
       
       <section className="section-spacing">
