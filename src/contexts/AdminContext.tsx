@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Types
@@ -8,6 +7,7 @@ export interface Content {
   title: string;
   description?: string;
   imageSrc: string;
+  name?: string;
   role?: string;
   bio?: string;
   projects?: {
@@ -61,6 +61,7 @@ const initialContent: Content[] = [
   {
     id: 'team-1',
     type: 'team',
+    title: 'Alex Morgan',
     name: 'Alex Morgan',
     role: 'CEO & Founder',
     imageSrc: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
@@ -77,6 +78,7 @@ const initialContent: Content[] = [
   {
     id: 'team-2',
     type: 'team',
+    title: 'Sophia Chen',
     name: 'Sophia Chen',
     role: 'Chief Strategy Officer',
     imageSrc: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80',
@@ -93,6 +95,7 @@ const initialContent: Content[] = [
   {
     id: 'team-3',
     type: 'team',
+    title: 'Daniel Kim',
     name: 'Daniel Kim',
     role: 'Head of Technology',
     imageSrc: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',

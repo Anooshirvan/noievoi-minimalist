@@ -6,7 +6,10 @@ import { useAdmin } from '../contexts/AdminContext';
 
 const Team = () => {
   const { content } = useAdmin();
-  const teamMembers = content.filter(item => item.type === 'team') as TeamMemberType[];
+  // Fix type casting by ensuring only team members with name property are used
+  const teamMembers = content.filter(item => 
+    item.type === 'team' && item.name
+  ) as unknown as TeamMemberType[];
 
   return (
     <div className="page-transition">

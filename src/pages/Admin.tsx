@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAdmin } from '../contexts/AdminContext';
 import AdminPanel from '../components/AdminPanel';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 const Admin = () => {
   const { isAuthenticated, login } = useAdmin();

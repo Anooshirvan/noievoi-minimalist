@@ -10,8 +10,9 @@ const TeamDetail = () => {
   const navigate = useNavigate();
   const { content } = useAdmin();
   
-  // Find the team member
-  const member = content.find(item => item.id === id) as TeamMemberType | undefined;
+  // Find the team member and ensure it's of the correct type
+  const teamItem = content.find(item => item.id === id && item.type === 'team');
+  const member = teamItem && teamItem.name ? teamItem as unknown as TeamMemberType : undefined;
   
   // Redirect if member not found
   useEffect(() => {

@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { useAdmin, Content } from '../contexts/AdminContext';
 import { X, Upload, Save, Trash2 } from 'lucide-react';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 interface AdminFormProps {
   item: Content | null;
@@ -12,7 +11,6 @@ interface AdminFormProps {
   isNew?: boolean;
 }
 
-// Helper function to generate unique ID
 const generateId = (type: string) => `${type}-${Date.now()}`;
 
 const AdminForm: React.FC<AdminFormProps> = ({ 
@@ -41,18 +39,16 @@ const AdminForm: React.FC<AdminFormProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type and size
     if (!file.type.match('image.*')) {
       toast.error('Please select an image file');
       return;
     }
 
-    if (file.size > 5000000) { // 5MB limit
+    if (file.size > 5000000) {
       toast.error('Image size must be less than 5MB');
       return;
     }
 
-    // Read and preview the image
     const reader = new FileReader();
     reader.onload = (event) => {
       if (event.target?.result) {
@@ -67,13 +63,11 @@ const AdminForm: React.FC<AdminFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     if (!formData.title || !formData.imageSrc) {
       toast.error('Please fill in all required fields');
       return;
     }
 
-    // Generate ID for new items
     const updatedData = isNew 
       ? { ...formData, id: generateId(formData.type) } 
       : formData;
@@ -89,7 +83,6 @@ const AdminForm: React.FC<AdminFormProps> = ({
     }
   };
 
-  // Different form fields based on content type
   const renderTypeSpecificFields = () => {
     switch(formData.type) {
       case 'team':
