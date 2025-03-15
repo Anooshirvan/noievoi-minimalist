@@ -31,7 +31,7 @@ export interface Content {
 interface AdminContextType {
   content: Content[];
   isAuthenticated: boolean;
-  login: (password: string) => boolean;
+  login: (email: string, password: string) => boolean;
   logout: () => void;
   updateContent: (updatedItem: Content) => void;
   addContent: (newItem: Content) => void;
@@ -201,7 +201,8 @@ const initialContent: Content[] = [
 // Admin context
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// The admin password (in a real app, this would be securely stored server-side)
+// Admin credentials (in a real app, these would be securely stored server-side)
+const ADMIN_EMAIL = 'admin@noievoi.com';
 const ADMIN_PASSWORD = 'admin123';
 
 export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -224,8 +225,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('noievoi-admin-auth', isAuthenticated.toString());
   }, [isAuthenticated]);
 
-  const login = (password: string): boolean => {
-    if (password === ADMIN_PASSWORD) {
+  const login = (email: string, password: string): boolean => {
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       return true;
     }
