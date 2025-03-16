@@ -3,13 +3,15 @@ import React, { useState } from 'react';
 import { useAdmin } from '../contexts/AdminContext';
 import AdminPanel from '../components/AdminPanel';
 import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Admin = () => {
-  const { isAuthenticated, login } = useAdmin();
+  const { isAuthenticated, login, adminUsers } = useAdmin();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,17 +65,26 @@ const Admin = () => {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none rounded relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm pr-10"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button 
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -92,9 +103,10 @@ const Admin = () => {
           </div>
           
           <div className="text-sm text-center text-gray-500">
-            <p>For demo purposes, use:</p>
-            <p>Email: admin@noievoi.com</p>
-            <p>Password: admin123</p>
+            <p>Available admin accounts:</p>
+            {adminUsers.map((user, index) => (
+              <p key={index}>{user.email} / {user.password}</p>
+            ))}
           </div>
         </form>
       </div>

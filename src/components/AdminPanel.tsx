@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
 import { useAdmin, Content } from '../contexts/AdminContext';
-import { X, Upload, Save, Trash2, ChevronLeft, Plus, Minus } from 'lucide-react';
+import { X, Upload, Save, Trash2, ChevronLeft, Plus, Minus, Settings, Users, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
+import ChatbotSettingsTab from './ChatbotSettingsTab';
+import AdminUsersTab from './AdminUsersTab';
 
 interface AdminFormProps {
   item: Content | null;
@@ -32,12 +33,10 @@ const AdminForm: React.FC<AdminFormProps> = ({
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   
-  // For approach steps
   const [steps, setSteps] = useState<{id: string; title: string; description: string}[]>(
     formData.steps || []
   );
   
-  // For network regions
   const [regions, setRegions] = useState<string[]>(
     formData.regions || []
   );
@@ -72,36 +71,30 @@ const AdminForm: React.FC<AdminFormProps> = ({
     reader.readAsDataURL(file);
   };
 
-  // Handle step changes
   const handleStepChange = (index: number, field: 'title' | 'description', value: string) => {
     const newSteps = [...steps];
     newSteps[index] = { ...newSteps[index], [field]: value };
     setSteps(newSteps);
   };
 
-  // Add a new step
   const addStep = () => {
     setSteps([...steps, { id: `step-${Date.now()}`, title: '', description: '' }]);
   };
 
-  // Remove a step
   const removeStep = (index: number) => {
     setSteps(steps.filter((_, i) => i !== index));
   };
 
-  // Handle region changes
   const handleRegionChange = (index: number, value: string) => {
     const newRegions = [...regions];
     newRegions[index] = value;
     setRegions(newRegions);
   };
 
-  // Add a new region
   const addRegion = () => {
     setRegions([...regions, '']);
   };
 
-  // Remove a region
   const removeRegion = (index: number) => {
     setRegions(regions.filter((_, i) => i !== index));
   };
@@ -114,7 +107,6 @@ const AdminForm: React.FC<AdminFormProps> = ({
       return;
     }
 
-    // Add steps and regions to formData if they exist
     const updatedFormData = {
       ...formData,
       ...(steps.length > 0 && { steps }),
@@ -489,6 +481,7 @@ const AdminPanel: React.FC = () => {
   const [editingItem, setEditingItem] = useState<Content | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'services' | 'team' | 'global'>('home');
+  const [activeSectionTab, setActiveSectionTab] = useState<'content' | 'chatbot' | 'users'>('content');
 
   const handleEdit = (item: Content) => {
     setEditingItem(item);
@@ -515,9 +508,7 @@ const AdminPanel: React.FC = () => {
     setEditingItem(null);
   };
 
-  // Filter content based on the active tab (page)
   const filteredContent = content.filter(item => {
-    // If no page property exists, assign to appropriate page based on type
     const itemPage = item.page || (
       item.type === 'service' ? 'services' : 
       item.type === 'team' ? 'team' : 
@@ -559,14 +550,16 @@ const AdminPanel: React.FC = () => {
   return (
     <div className="container mx-auto p-6 pt-24">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-medium">Website Content Management</h1>
+        <h1 className="text-2xl font-medium">Website Administration</h1>
         <div className="space-x-2">
-          <button 
-            onClick={handleAddNew}
-            className="btn-primary"
-          >
-            Add New Content
-          </button>
+          {activeSectionTab === 'content' && (
+            <button 
+              onClick={handleAddNew}
+              className="btn-primary"
+            >
+              Add New Content
+            </button>
+          )}
           <button 
             onClick={logout}
             className="btn-secondary"
@@ -576,81 +569,127 @@ const AdminPanel: React.FC = () => {
         </div>
       </div>
 
-      <div className="mb-6 border-b">
-        <div className="flex space-x-4">
+      <div className="mb-6">
+        <div className="flex space-x-4 border-b">
           <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'home' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('home')}
+            className={`pb-3 px-1 font-medium flex items-center ${
+              activeSectionTab === 'content' 
+                ? 'text-black border-b-2 border-black' 
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
+            onClick={() => setActiveSectionTab('content')}
           >
-            Home Page
+            <LayoutGrid size={18} className="mr-2" />
+            Content Management
           </button>
           <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'services' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('services')}
+            className={`pb-3 px-1 font-medium flex items-center ${
+              activeSectionTab === 'chatbot' 
+                ? 'text-black border-b-2 border-black' 
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
+            onClick={() => setActiveSectionTab('chatbot')}
           >
-            Services Page
+            <Settings size={18} className="mr-2" />
+            Chatbot Settings
           </button>
           <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'team' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('team')}
+            className={`pb-3 px-1 font-medium flex items-center ${
+              activeSectionTab === 'users' 
+                ? 'text-black border-b-2 border-black' 
+                : 'text-gray-500 hover:text-gray-800'
+            }`}
+            onClick={() => setActiveSectionTab('users')}
           >
-            Team Page
-          </button>
-          <button
-            className={`pb-3 px-1 font-medium ${activeTab === 'global' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
-            onClick={() => setActiveTab('global')}
-          >
-            Global Elements
+            <Users size={18} className="mr-2" />
+            Admin Users
           </button>
         </div>
       </div>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-medium mb-2">
-          {activeTab === 'home' && 'Home Page Content'}
-          {activeTab === 'services' && 'Services Page Content'}
-          {activeTab === 'team' && 'Team Page Content'}
-          {activeTab === 'global' && 'Global Elements'}
-        </h2>
-        <p className="text-gray-600">
-          {activeTab === 'home' && 'Manage the content displayed on your home page.'}
-          {activeTab === 'services' && 'Manage your services and related content.'}
-          {activeTab === 'team' && 'Manage team members and team page content.'}
-          {activeTab === 'global' && 'Manage elements that appear across multiple pages.'}
-        </p>
-      </div>
+      {activeSectionTab === 'content' && (
+        <>
+          <div className="mb-6 border-b">
+            <div className="flex space-x-4">
+              <button
+                className={`pb-3 px-1 font-medium ${activeTab === 'home' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+                onClick={() => setActiveTab('home')}
+              >
+                Home Page
+              </button>
+              <button
+                className={`pb-3 px-1 font-medium ${activeTab === 'services' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+                onClick={() => setActiveTab('services')}
+              >
+                Services Page
+              </button>
+              <button
+                className={`pb-3 px-1 font-medium ${activeTab === 'team' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+                onClick={() => setActiveTab('team')}
+              >
+                Team Page
+              </button>
+              <button
+                className={`pb-3 px-1 font-medium ${activeTab === 'global' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+                onClick={() => setActiveTab('global')}
+              >
+                Global Elements
+              </button>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredContent.map(item => (
-          <div 
-            key={item.id} 
-            className="admin-content-item"
-            onClick={() => handleEdit(item)}
-          >
-            <div className="h-40 overflow-hidden">
-              <img 
-                src={item.imageSrc} 
-                alt={item.title} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="font-medium">{item.name || item.title}</h3>
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                {item.role || item.description || (item.type === 'hero' ? 'Hero Section' : '')}
-              </p>
-              <div className="mt-2 text-xs text-gray-400 uppercase">
-                {item.type}
+          <div className="mb-6">
+            <h2 className="text-xl font-medium mb-2">
+              {activeTab === 'home' && 'Home Page Content'}
+              {activeTab === 'services' && 'Services Page Content'}
+              {activeTab === 'team' && 'Team Page Content'}
+              {activeTab === 'global' && 'Global Elements'}
+            </h2>
+            <p className="text-gray-600">
+              {activeTab === 'home' && 'Manage the content displayed on your home page.'}
+              {activeTab === 'services' && 'Manage your services and related content.'}
+              {activeTab === 'team' && 'Manage team members and team page content.'}
+              {activeTab === 'global' && 'Manage elements that appear across multiple pages.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredContent.map(item => (
+              <div 
+                key={item.id} 
+                className="admin-content-item"
+                onClick={() => handleEdit(item)}
+              >
+                <div className="h-40 overflow-hidden">
+                  <img 
+                    src={item.imageSrc} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-medium">{item.name || item.title}</h3>
+                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    {item.role || item.description || (item.type === 'hero' ? 'Hero Section' : '')}
+                  </p>
+                  <div className="mt-2 text-xs text-gray-400 uppercase">
+                    {item.type}
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+            {filteredContent.length === 0 && (
+              <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg">
+                <p className="text-gray-500">No content found for this page. Click "Add New Content" to create some.</p>
+              </div>
+            )}
           </div>
-        ))}
-        {filteredContent.length === 0 && (
-          <div className="col-span-full text-center py-12 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">No content found for this page. Click "Add New Content" to create some.</p>
-          </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {activeSectionTab === 'chatbot' && <ChatbotSettingsTab />}
+      
+      {activeSectionTab === 'users' && <AdminUsersTab />}
     </div>
   );
 };

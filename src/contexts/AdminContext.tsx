@@ -28,15 +28,104 @@ export interface Content {
   }[];
 }
 
+export interface ChatbotCharacter {
+  id: string;
+  name: string;
+  gender: 'male' | 'female';
+  avatarUrl: string;
+}
+
+export interface ChatbotQuestion {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export interface ChatbotConfig {
+  enabled: boolean;
+  selectedCharacter: string;
+  welcomeMessage: string;
+  characters: ChatbotCharacter[];
+  questions: ChatbotQuestion[];
+}
+
+export interface AdminUser {
+  email: string;
+  password: string; // In a real app, this would be hashed
+  name?: string;
+}
+
 interface AdminContextType {
   content: Content[];
+  chatbotConfig: ChatbotConfig;
+  adminUsers: AdminUser[];
   isAuthenticated: boolean;
   login: (email: string, password: string) => boolean;
   logout: () => void;
   updateContent: (updatedItem: Content) => void;
   addContent: (newItem: Content) => void;
   deleteContent: (id: string) => void;
+  updateChatbotConfig: (config: ChatbotConfig) => void;
+  updateChatbotQuestion: (question: ChatbotQuestion) => void;
+  addChatbotQuestion: (question: ChatbotQuestion) => void;
+  deleteChatbotQuestion: (id: string) => void;
+  addAdminUser: (user: AdminUser) => void;
+  updateAdminUser: (email: string, user: Partial<AdminUser>) => void;
+  deleteAdminUser: (email: string) => void;
 }
+
+// Initial chatbot data
+const initialChatbotConfig: ChatbotConfig = {
+  enabled: true,
+  selectedCharacter: 'char-1',
+  welcomeMessage: 'Hello! How can I help you today?',
+  characters: [
+    {
+      id: 'char-1',
+      name: 'Alex',
+      gender: 'male',
+      avatarUrl: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    },
+    {
+      id: 'char-2',
+      name: 'Mike',
+      gender: 'male',
+      avatarUrl: 'https://images.unsplash.com/photo-1557862921-37829c790f19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80'
+    },
+    {
+      id: 'char-3',
+      name: 'Sarah',
+      gender: 'female',
+      avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80'
+    }
+  ],
+  questions: [
+    {
+      id: 'q-1',
+      question: 'What services do you offer?',
+      answer: 'We offer strategic consulting, digital transformation, and market entry strategy services. You can find more details on our Services page.'
+    },
+    {
+      id: 'q-2',
+      question: 'How can I contact your team?',
+      answer: 'You can reach us through the contact form on our website or by sending an email to contact@noievoi.com.'
+    },
+    {
+      id: 'q-3',
+      question: 'Where are you located?',
+      answer: 'We have a global presence with team members across North America, Europe, Asia Pacific, and the Middle East.'
+    }
+  ]
+};
+
+// Initial admin users
+const initialAdminUsers: AdminUser[] = [
+  {
+    email: 'admin@noievoi.com',
+    password: 'admin123',
+    name: 'Admin User'
+  }
+];
 
 // Sample initial data
 const initialContent: Content[] = [
@@ -201,14 +290,20 @@ const initialContent: Content[] = [
 // Admin context
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-// Admin credentials (in a real app, these would be securely stored server-side)
-const ADMIN_EMAIL = 'admin@noievoi.com';
-const ADMIN_PASSWORD = 'admin123';
-
 export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [content, setContent] = useState<Content[]>(() => {
     const savedContent = localStorage.getItem('noievoi-content');
     return savedContent ? JSON.parse(savedContent) : initialContent;
+  });
+  
+  const [chatbotConfig, setChatbotConfig] = useState<ChatbotConfig>(() => {
+    const savedConfig = localStorage.getItem('noievoi-chatbot');
+    return savedConfig ? JSON.parse(savedConfig) : initialChatbotConfig;
+  });
+
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>(() => {
+    const savedUsers = localStorage.getItem('noievoi-admin-users');
+    return savedUsers ? JSON.parse(savedUsers) : initialAdminUsers;
   });
   
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -220,13 +315,24 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem('noievoi-content', JSON.stringify(content));
   }, [content]);
 
+  // Save chatbot config to localStorage
+  useEffect(() => {
+    localStorage.setItem('noievoi-chatbot', JSON.stringify(chatbotConfig));
+  }, [chatbotConfig]);
+
+  // Save admin users to localStorage
+  useEffect(() => {
+    localStorage.setItem('noievoi-admin-users', JSON.stringify(adminUsers));
+  }, [adminUsers]);
+
   // Save authentication state
   useEffect(() => {
     localStorage.setItem('noievoi-admin-auth', isAuthenticated.toString());
   }, [isAuthenticated]);
 
   const login = (email: string, password: string): boolean => {
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    const user = adminUsers.find(user => user.email === email && user.password === password);
+    if (user) {
       setIsAuthenticated(true);
       return true;
     }
@@ -253,16 +359,66 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setContent(prevContent => prevContent.filter(item => item.id !== id));
   };
 
+  const updateChatbotConfig = (config: ChatbotConfig) => {
+    setChatbotConfig(config);
+  };
+
+  const updateChatbotQuestion = (question: ChatbotQuestion) => {
+    setChatbotConfig(prev => ({
+      ...prev,
+      questions: prev.questions.map(q => 
+        q.id === question.id ? question : q
+      )
+    }));
+  };
+
+  const addChatbotQuestion = (question: ChatbotQuestion) => {
+    setChatbotConfig(prev => ({
+      ...prev,
+      questions: [...prev.questions, question]
+    }));
+  };
+
+  const deleteChatbotQuestion = (id: string) => {
+    setChatbotConfig(prev => ({
+      ...prev,
+      questions: prev.questions.filter(q => q.id !== id)
+    }));
+  };
+
+  const addAdminUser = (user: AdminUser) => {
+    setAdminUsers(prev => [...prev, user]);
+  };
+
+  const updateAdminUser = (email: string, userData: Partial<AdminUser>) => {
+    setAdminUsers(prev => prev.map(user => 
+      user.email === email ? { ...user, ...userData } : user
+    ));
+  };
+
+  const deleteAdminUser = (email: string) => {
+    setAdminUsers(prev => prev.filter(user => user.email !== email));
+  };
+
   return (
     <AdminContext.Provider 
       value={{ 
         content, 
+        chatbotConfig,
+        adminUsers,
         isAuthenticated, 
         login, 
         logout, 
         updateContent, 
         addContent, 
-        deleteContent 
+        deleteContent,
+        updateChatbotConfig,
+        updateChatbotQuestion,
+        addChatbotQuestion,
+        deleteChatbotQuestion,
+        addAdminUser,
+        updateAdminUser,
+        deleteAdminUser
       }}
     >
       {children}
