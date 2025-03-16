@@ -1,4 +1,3 @@
-
 import React from 'react';
 import HeroSection from '../components/HeroSection';
 import ServiceCard from '../components/ServiceCard';
@@ -102,7 +101,7 @@ const Services = () => {
               {/* Step 1 */}
               <div className="md:grid md:grid-cols-2 md:gap-8 relative">
                 <div className="md:text-right md:pr-16 animate-fade-in-up">
-                  <div className="hidden md:block absolute right-0 top-0 w-3 h-3 rounded-full bg-primary shadow-md border border-primary/20 transform translate-x-1/2"></div>
+                  <div className="hidden md:block absolute right-0 top-0 w-2.5 h-2.5 rounded-full bg-blue-500 shadow-md border-2 border-white transform translate-x-1/2 z-10"></div>
                   <h3 className="text-xl font-medium mb-3">Initial Consultation</h3>
                   <p className="text-gray-600">
                     We begin with a thorough consultation to understand your business, challenges, and objectives. This forms the foundation of our working relationship.
@@ -115,7 +114,7 @@ const Services = () => {
               <div className="md:grid md:grid-cols-2 md:gap-8 relative">
                 <div className="md:text-right md:pr-16 md:hidden"></div>
                 <div className="md:pl-16 animate-fade-in-up" style={{animationDelay: '100ms'}}>
-                  <div className="hidden md:block absolute left-0 top-0 w-3 h-3 rounded-full bg-primary shadow-md border border-primary/20 transform -translate-x-1/2"></div>
+                  <div className="hidden md:block absolute left-0 top-0 w-2.5 h-2.5 rounded-full bg-blue-500 shadow-md border-2 border-white transform -translate-x-1/2 z-10"></div>
                   <h3 className="text-xl font-medium mb-3">Strategic Assessment</h3>
                   <p className="text-gray-600">
                     Our team analyzes your situation, identifies key areas for improvement, and develops a customized strategy to address your specific needs.
@@ -126,7 +125,7 @@ const Services = () => {
               {/* Step 3 */}
               <div className="md:grid md:grid-cols-2 md:gap-8 relative">
                 <div className="md:text-right md:pr-16 animate-fade-in-up" style={{animationDelay: '200ms'}}>
-                  <div className="hidden md:block absolute right-0 top-0 w-3 h-3 rounded-full bg-primary shadow-md border border-primary/20 transform translate-x-1/2"></div>
+                  <div className="hidden md:block absolute right-0 top-0 w-2.5 h-2.5 rounded-full bg-blue-500 shadow-md border-2 border-white transform translate-x-1/2 z-10"></div>
                   <h3 className="text-xl font-medium mb-3">Implementation & Execution</h3>
                   <p className="text-gray-600">
                     We work collaboratively with your team to implement the agreed-upon solutions, providing guidance and expertise throughout the process.
@@ -139,7 +138,7 @@ const Services = () => {
               <div className="md:grid md:grid-cols-2 md:gap-8 relative">
                 <div className="md:text-right md:pr-16 md:hidden"></div>
                 <div className="md:pl-16 animate-fade-in-up" style={{animationDelay: '300ms'}}>
-                  <div className="hidden md:block absolute left-0 top-0 w-3 h-3 rounded-full bg-primary shadow-md border border-primary/20 transform -translate-x-1/2"></div>
+                  <div className="hidden md:block absolute left-0 top-0 w-2.5 h-2.5 rounded-full bg-blue-500 shadow-md border-2 border-white transform -translate-x-1/2 z-10"></div>
                   <h3 className="text-xl font-medium mb-3">Evaluation & Refinement</h3>
                   <p className="text-gray-600">
                     We continuously monitor progress, measure results against key performance indicators, and refine our approach to ensure optimal outcomes.
